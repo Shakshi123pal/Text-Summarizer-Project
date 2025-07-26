@@ -1,13 +1,15 @@
 import os
-from box.exceptions import BoxValueError
+from box import Box, BoxError  
+
 import yaml
 from textSummarizer.logging import logger
-from ensure import ensure_annotations_exist
+from ensure import ensure_annotations  # ✅ This is the actual decorator
+
 from box import ConfigBox
 from pathlib import Path
 from typing import Any
 
-@ensure_annotations_exist
+@ensure_annotations
 def read_yaml(path_to_yaml:Path) -> ConfigBox:
     """
     Read a YAML file and return 
@@ -25,7 +27,7 @@ def read_yaml(path_to_yaml:Path) -> ConfigBox:
             content = yaml.safe_load(yaml_file)
             logger.info(f"yaml file: {path_to_yaml} loaded sucessfully")
             return ConfigBox(content)
-    except BoxValueError as e:
+    except BoxError as e:
         raise ValueError(f"yaml file is empty")
         
     except Exception as e:
@@ -34,8 +36,8 @@ def read_yaml(path_to_yaml:Path) -> ConfigBox:
 
 
 
-@ ensure_annotations_exist
-def create_directories(path_to_directories:list,verbose:True):
+@ ensure_annotations
+def create_directories(path_to_directories:list,verbose: bool=True):
     """
     Create directories if they do not exist.
     Args:
@@ -43,12 +45,12 @@ def create_directories(path_to_directories:list,verbose:True):
         verbose (bool): If True, print the creation of directories
     """
     for path in path_to_directories:
-        os.makedirs(Path,exist_ok=True)
+        os.makedirs(path,exist_ok=True)
         if verbose:
             logger.info(f"created directory at: {path}")
 
 
-@ensure_annotations_exist
+@ensure_annotations
 def get_size(path:Path) ->str:
     """
     Get the size of a file in KB.
